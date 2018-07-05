@@ -13,6 +13,17 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+/*增加express   Express 是一个基于 Node.js 平台的极简、灵活的 web 应用开发框架*/
+const express = require('express')
+const app = express()
+var appData = require('../goods.json')//加载本地数据文件
+var goods = appData.goods
+var apiRoutes = express.Router()
+app.use('/api', apiRoutes)
+
+
+
+
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
@@ -42,7 +53,16 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
+    },
+    before(app) {
+      app.get('/api/goods', (req, res) => {
+        res.json({
+          code: 0,
+          data: goods
+        })
+      })
     }
+
   },
   plugins: [
     new webpack.DefinePlugin({
